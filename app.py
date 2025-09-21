@@ -24,8 +24,19 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 
 ## Bedrock Clients
-bedrock=boto3.client(service_name="bedrock-runtime")
-bedrock_embeddings=BedrockEmbeddings(model_id="amazon.titan-embed-text-v2:0",client=bedrock)
+aws = st.secrets["aws"]
+session = boto3.Session(
+    region_name=aws["region"],
+    aws_access_key_id=aws["aws_access_key_id"],
+    aws_secret_access_key=aws["aws_secret_access_key"],
+    aws_session_token=aws.get("aws_session_token"),
+)
+bedrock = session.client("bedrock-runtime")  # ← use the session
+bedrock_embeddings = BedrockEmbeddings(
+    model_id="amazon.titan-embed-text-v2:0",
+    client=bedrock
+)
+
 
 
 ## Data ingestion
